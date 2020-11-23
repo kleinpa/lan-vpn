@@ -1,0 +1,169 @@
+workspace(name = "tbd")
+
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
+http_archive(
+    name = "io_bazel_rules_go",
+    sha256 = "d1ffd055969c8f8d431e2d439813e42326961d0942bdf734d2c95dc30c369566",
+    urls = [
+        "https://mirror.bazel.build/github.com/bazelbuild/rules_go/releases/download/v0.24.5/rules_go-v0.24.5.tar.gz",
+        "https://github.com/bazelbuild/rules_go/releases/download/v0.24.5/rules_go-v0.24.5.tar.gz",
+    ],
+)
+
+http_archive(
+    name = "bazel_gazelle",
+    sha256 = "b85f48fa105c4403326e9525ad2b2cc437babaa6e15a3fc0b1dbab0ab064bc7c",
+    urls = [
+        "https://mirror.bazel.build/github.com/bazelbuild/bazel-gazelle/releases/download/v0.22.2/bazel-gazelle-v0.22.2.tar.gz",
+        "https://github.com/bazelbuild/bazel-gazelle/releases/download/v0.22.2/bazel-gazelle-v0.22.2.tar.gz",
+    ],
+)
+
+load("@io_bazel_rules_go//go:deps.bzl", "go_register_toolchains", "go_rules_dependencies")
+
+go_rules_dependencies()
+
+go_register_toolchains()
+
+load("@bazel_gazelle//:deps.bzl", "gazelle_dependencies", "go_repository")
+
+go_repository(
+    name = "com_github_golang_protobuf",
+    importpath = "github.com/golang/protobuf",
+    sum = "h1:JjCZWpVbqXDqFVmTfYWEVTMIYrL/NPdPSCHPJ0T/raM=",
+    version = "v1.4.3",
+)
+
+load("//exporter:deps.bzl", "go_dependencies")
+
+# gazelle:repository_macro exporter/deps.bzl%go_dependencies
+go_dependencies()
+
+gazelle_dependencies()
+
+http_archive(
+    name = "com_google_protobuf",
+    sha256 = "7d663c8dc81d282dc92e884b38e9c179671e31ccacce311154420e65f7d142c6",
+    strip_prefix = "protobuf-3.13.0.1",
+    urls = [
+        "https://mirror.bazel.build/github.com/protocolbuffers/protobuf/archive/v3.13.0.1.tar.gz",
+        "https://github.com/protocolbuffers/protobuf/archive/v3.13.0.1.tar.gz",
+    ],
+)
+
+load("@com_google_protobuf//:protobuf_deps.bzl", "protobuf_deps")
+
+protobuf_deps()
+
+http_archive(
+    name = "io_bazel_rules_docker",
+    sha256 = "1698624e878b0607052ae6131aa216d45ebb63871ec497f26c67455b34119c80",
+    strip_prefix = "rules_docker-0.15.0",
+    urls = ["https://github.com/bazelbuild/rules_docker/releases/download/v0.15.0/rules_docker-v0.15.0.tar.gz"],
+)
+
+load(
+    "@io_bazel_rules_docker//repositories:repositories.bzl",
+    container_repositories = "repositories",
+)
+
+container_repositories()
+
+load(
+    "@io_bazel_rules_docker//go:image.bzl",
+    _go_image_repos = "repositories",
+)
+
+_go_image_repos()
+
+load(
+    "@io_bazel_rules_docker//cc:image.bzl",
+    _cc_image_repos = "repositories",
+)
+
+_cc_image_repos()
+
+http_archive(
+    name = "com_github_esnet_iperf",
+    build_file = "iperf3-BUILD.bazel",
+    sha256 = "c6d8076b800f2b51f92dc941b0a9b77fbf2a867f623b5cb3cbf4754dabc40899",
+    strip_prefix = "iperf-3.9",
+    urls = [
+        "https://github.com/esnet/iperf/archive/3.9.tar.gz",
+    ],
+)
+
+load("@io_bazel_rules_docker//container:container.bzl", "container_pull")
+
+container_pull(
+    name = "debian_base",
+    digest = "sha256:819f12d5482276ee5ae8d8bb92853ef4ea82c762292de383d1e59d1804a7944f",
+    registry = "index.docker.io",
+    repository = "library/debian",
+)
+
+http_archive(
+    name = "com_github_openvpn_openvpn",
+    build_file = "openvpn-BUILD.bazel",
+    sha256 = "d9fbeede4b650bfd9bac12384fbae3f90c26c07248d3031df171056c17a7f3a3",
+    strip_prefix = "openvpn-2.5.0",
+    urls = [
+        "https://github.com/OpenVPN/openvpn/archive/v2.5.0.tar.gz",
+    ],
+)
+
+http_archive(
+    name = "openssl",
+    build_file = "openssl-BUILD.bazel",
+    sha256 = "23011a5cc78e53d0dc98dfa608c51e72bcd350aa57df74c5d5574ba4ffb62e74",
+    strip_prefix = "openssl-OpenSSL_1_1_1d",
+    urls = [
+        "https://github.com/openssl/openssl/archive/OpenSSL_1_1_1d.tar.gz",
+        "https://www.openssl.org/source/openssl-1.1.1d.tar.gz",
+    ],
+)
+
+http_archive(
+    name = "rules_foreign_cc",
+    sha256 = "3e6b0691fc57db8217d535393dcc2cf7c1d39fc87e9adb6e7d7bab1483915110",
+    strip_prefix = "rules_foreign_cc-master",
+    url = "https://github.com/bazelbuild/rules_foreign_cc/archive/master.zip",
+)
+
+load("@rules_foreign_cc//:workspace_definitions.bzl", "rules_foreign_cc_dependencies")
+
+rules_foreign_cc_dependencies()
+
+http_archive(
+    name = "com_github_armmbed_mbedtls",
+    build_file = "mbedtls-BUILD.bazel",
+    sha256 = "d436ae4892bd80329ca18a3960052fbb42d3f1f46c7519711d6763621ca6cfa0",
+    strip_prefix = "mbedtls-2.24.0",
+    urls = [
+        "https://github.com/ARMmbed/mbedtls/archive/v2.24.0.tar.gz",
+    ],
+)
+
+http_archive(
+    name = "org_kernel_iproute2",
+    build_file = "iproute2-BUILD.bazel",
+    patch_args = ["-p1"],
+    patches = ["iproute2.patch"],
+    sha256 = "1afde56d416f136b1236ac2f8276e4edbe114ca3c2ab12f11af11b84cf0992e4",
+    strip_prefix = "iproute2-5.9.0",
+    urls = [
+        "https://git.kernel.org/pub/scm/network/iproute2/iproute2.git/snapshot/iproute2-5.9.0.tar.gz",
+        "https://github.com/shemminger/iproute2/archive/v5.9.0.tar.gz",
+    ],
+)
+
+http_archive(
+    name = "com_github_openvpn_easyrsa",
+    build_file = "easyrsa-BUILD.bazel",
+    sha256 = "1179453c18bc16316973545d4593c3f61a16bcddff7e1b749e1853bad7535593",
+    strip_prefix = "easy-rsa-3.0.8",
+    urls = [
+        "https://github.com/OpenVPN/easy-rsa/archive/v3.0.8.zip",
+    ],
+)

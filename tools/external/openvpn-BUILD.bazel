@@ -1,0 +1,57 @@
+load("@rules_foreign_cc//tools/build_defs:configure.bzl", "configure_make")
+load("@rules_pkg//:pkg.bzl", "pkg_tar")
+load("@bazel_skylib//rules:copy_file.bzl", "copy_file")
+
+filegroup(name = "all", srcs = glob(["**"]))
+
+configure_make(
+    name = "openvpn_make",
+    out_bin_dir = "sbin",
+    binaries = [
+        "openvpn",
+    ],
+    configure_options = [
+        "--disable-lz4",
+        "--disable-lzo",
+        "--disable-plugin-auth-pam",
+        "--disable-plugins",
+        "--disable-debug",
+        "--enable-small",
+        "--disable-shared",
+        "--enable-static",
+        "--with-crypto-library=mbedtls",
+
+        # https://github.com/bazelbuild/rules_foreign_cc/issues/239
+        "CFLAGS='-D__DATE__=\\\"redacted\\\"'",
+    ],
+    configure_in_place = True,
+    autoreconf = True,
+    autoreconf_options = ["-v", "-i", "-f"],
+    lib_source = ":all",
+    make_commands = ["make LIBS=\"-all-static\" install"],
+    deps = [
+        "@com_github_armmbed_mbedtls//:mbedtls",
+    ],
+)
+
+filegroup(
+    name = "openvpn_files",
+    srcs = [":openvpn_make"],
+    output_group = "openvpn",
+)
+
+copy_file(
+    name = "openvpn",
+    src = ":openvpn_files",
+    out = "out",
+    is_executable = True,
+    visibility = ["//visibility:public"],
+)
+
+pkg_tar(
+    name = "bin_tar",
+    srcs = [":openvpn_files"],
+    mode = "0755",
+    package_dir = "/sbin",
+    visibility = ["//visibility:public"],
+)

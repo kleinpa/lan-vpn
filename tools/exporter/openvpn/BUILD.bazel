@@ -1,0 +1,15 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "openvpn",
+    srcs = ["status.go"],
+    importpath = "github.com/kleinpa/lan-vpn/tools/exporter/openvpn",
+    visibility = ["//visibility:public"],
+)
+
+go_test(
+    name = "openvpn_test",
+    srcs = ["status_test.go"],
+    data = glob(["testdata/**"]),
+    embed = [":openvpn"],
+)

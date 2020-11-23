@@ -1,0 +1,5 @@
+sh_binary(
+    name = "easyrsa",
+    srcs = [":easyrsa3/easyrsa"],
+    visibility = ["//visibility:public"],
+)

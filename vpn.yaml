@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: lan-vpn
+spec:
+  selector:
+    matchLabels:
+      app: lan-vpn
+  serviceName: "lan-vpn"
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: lan-vpn
+      annotations:
+         prometheus.io/scrape: "true"
+         prometheus.io/port: "38102"
+    spec:
+      containers:
+      - name: openvpn
+        image: registry.kleinpa.net/openvpn/server:latest
+        ports:
+        - name: openvpn-udp
+          protocol: UDP
+          containerPort: 1194
+        - name: metrics
+          containerPort: 38102
+        - name: openvpn-mgmt
+          containerPort: 31194
+        securityContext:
+          capabilities:
+            add:
+              - NET_ADMIN
+        volumeMounts:
+        - name: config-volume
+          mountPath: /etc/openvpn/openvpn.conf
+          subPath: server.conf
+        - name: status-volume
+          mountPath: /var/lib/openvpn
+      - name: iperf3
+        image: registry.kleinpa.net/openvpn/iperf3:latest
+      - name: exporter
+        image: registry.kleinpa.net/openvpn/exporter:latest
+        args: ["--listen_address=:38102", "--openvpn_status_path=/var/lib/openvpn/status"]
+        ports:
+        - name: metrics
+          containerPort: 38102
+        volumeMounts:
+        - name: status-volume
+          mountPath: /var/lib/openvpn
+          readOnly: true
+      volumes:
+      - name: config-volume
+        configMap:
+          name: lan-vpn-config
+      - name: status-volume
+        emptyDir: {}
+      imagePullSecrets:
+        - name: regcred

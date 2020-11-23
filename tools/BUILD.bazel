@@ -1,0 +1,22 @@
+load("@io_bazel_rules_docker//container:container.bzl", "container_image")
+load("@rules_pkg//:pkg.bzl", "pkg_tar")
+
+container_image(
+    name = "openvpn_bin_image",
+    base = "@debian_base//image",
+    tars = [
+        "@com_github_openvpn_openvpn//:bin_tar",
+        "@org_kernel_iproute2//:install_tar",
+    ],
+)
+
+container_image(
+    name = "openvpn_image",
+    base = ":openvpn_bin_image",
+    cmd = "/root/start.sh",
+    directory = "/root",
+    files = [
+        "start.sh",
+    ],
+    workdir = "/root",
+)

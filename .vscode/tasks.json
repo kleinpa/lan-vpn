@@ -1,0 +1,41 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Bazel Build All",
+      "type": "process",
+      "command": "bazel",
+      "args": [
+        "build",
+        "//...",
+        "--keep_going"
+      ],
+      "problemMatcher": [
+        "$go"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/tools"
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "IBazel Test",
+      "type": "process",
+      "command": "ibazel",
+      "args": [
+        "test",
+        "//...",
+        "--test_output=errors"
+      ],
+      "problemMatcher": [
+        "$go"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/tools"
+      },
+    }
+  ]
+}

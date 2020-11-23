@@ -1,0 +1,42 @@
+load("@rules_foreign_cc//tools/build_defs:configure.bzl", "configure_make")
+load("@rules_pkg//:pkg.bzl", "pkg_tar")
+
+filegroup(name = "all", srcs = glob(["**"]))
+
+configure_make(
+    name = "iproute2_make",
+    out_bin_dir = "sbin",
+    binaries = [
+        "ip",
+        "bridge",
+        "genl",
+        "ifcfg",
+        "ifstat",
+        "ip",
+        "lnstat",
+        "nstat",
+        "routef",
+        "routel",
+        "rtacct",
+        "rtmon",
+        "rtpr",
+        "ss",
+        "tc",
+    ],
+    lib_source = ":all",
+    configure_in_place = True,
+    make_commands = ["make", "make install DESTDIR=$BUILD_TMPDIR/$INSTALL_PREFIX"],
+)
+
+filegroup(
+    name = "install_dir",
+    srcs = [":iproute2_make"],
+    output_group = "gen_dir",
+)
+
+pkg_tar(
+    name = "install_tar",
+    srcs = [":install_dir"],
+    strip_prefix = "./copy_iproute2_make/iproute2_make",
+    visibility = ["//visibility:public"],
+)

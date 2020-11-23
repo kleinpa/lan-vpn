@@ -1,0 +1,10 @@
+TITLE	OpenVPN 2.5.0 x86_64-pc-linux-gnu [SSL (mbed TLS)] [EPOLL] [MH/PKTINFO] [AEAD] built on redacted
+TIME	2020-11-23 04:22:58	1606105378
+HEADER	CLIENT_LIST	Common Name	Real Address	Virtual Address	Virtual IPv6 Address	Bytes Received	Bytes Sent	Connected Since	Connected Since (time_t)	Username	Client ID	Peer ID	Data Channel Cipher
+CLIENT_LIST	lan-vpn-demo	10.244.1.1:37269	192.168.69.2		4320914	5449693	2020-11-23 00:07:31	1606090051	UNDEF	0	0	AES-256-GCM
+CLIENT_LIST	lan-vpn-demo	10.244.1.1:48115	192.168.69.3		5454845	4314463	2020-11-23 00:07:45	1606090065	UNDEF	1	1	AES-256-GCM
+HEADER	ROUTING_TABLE	Virtual Address	Common Name	Real Address	Last Ref	Last Ref (time_t)
+ROUTING_TABLE	00:ff:ad:3e:14:5e@0	lan-vpn-demo	10.244.1.1:48115	2020-11-23 03:10:58	1606101058
+ROUTING_TABLE	6e:2d:e5:69:c3:d5@0	lan-vpn-demo	10.244.1.1:37269	2020-11-23 03:10:58	1606101058
+GLOBAL_STATS	Max bcast/mcast queue length	1
+END
