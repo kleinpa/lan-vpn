@@ -1,20 +1,20 @@
-load("@rules_foreign_cc//tools/build_defs:cmake.bzl", "cmake_external")
+load("@rules_foreign_cc//foreign_cc:defs.bzl", "cmake")
 
 filegroup(name = "all", srcs = glob(["**"]))
 
-cmake_external(
+cmake(
     name = "mbedtls",
     lib_source = ":all",
     visibility = ["//visibility:public"],
-    cmake_options = [
-        "-DENABLE_TESTING=Off",  # avoid python and perl
-    ],
-    static_libraries = [
+    cache_entries =
+        {"ENABLE_TESTING":
+         "Off"},  # avoid python and perl
+    out_static_libs = [
         "libmbedtls.a",
         "libmbedcrypto.a",
         "libmbedx509.a",
     ],
-    binaries = [
+    out_binaries = [
         "aescrypt2",
         "benchmark",
         "cert_app",

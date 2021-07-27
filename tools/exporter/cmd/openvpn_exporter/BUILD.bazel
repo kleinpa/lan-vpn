@@ -8,8 +8,8 @@ go_library(
     visibility = ["//visibility:private"],
     deps = [
         "//exporter/openvpn",
-        "@com_github_prometheus_client_golang//prometheus:go_default_library",
-        "@com_github_prometheus_client_golang//prometheus/promhttp:go_default_library",
+        "@com_github_prometheus_client_golang//prometheus",
+        "@com_github_prometheus_client_golang//prometheus/promhttp",
     ],
 )
 

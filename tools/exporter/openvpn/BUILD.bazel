@@ -11,5 +11,5 @@ go_test(
     name = "openvpn_test",
     srcs = ["status_test.go"],
     data = glob(["testdata/**"]),
-    embed = [":openvpn"],
+    deps = [":openvpn"],
 )
